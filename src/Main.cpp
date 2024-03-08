@@ -8,6 +8,8 @@
 #include <vector>
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
+#include "VertexArray.hpp"
 
 static std::string readShaderFile(const std::string &filePath) {
 
@@ -108,23 +110,22 @@ int main() {
         -0.5, 0.5
     };
 
+    VertexBuffer vertexBuffer;
+    vertexBuffer.setData(positions);
+
+    VertexBufferLayout layout;
+    layout.addAttribute<float>(2, false);
+
+    VertexArray vertexArray;
+    vertexArray.setBuffer(vertexBuffer, layout);
+
     std::vector<unsigned int> indices{
         0, 1, 2,
         2, 3, 0
     };
 
-    unsigned int vertexArrayObjId;
-    glGenVertexArrays(1, &vertexArrayObjId);
-    glBindVertexArray(vertexArrayObjId);
-
-    VertexBuffer vertexBuffer;
-    vertexBuffer.setData(positions);
-
     IndexBuffer indexBuffer;
     indexBuffer.setData(indices);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
     std::string vertSrc = readShaderFile(R"(assets/shaders/basic.vert)");
     std::string fragSrc = readShaderFile(R"(assets/shaders/basic.frag)");
@@ -150,7 +151,7 @@ int main() {
         glUseProgram(shaderId);
         glUniform4f(colorUniLoc, currColor, currColor, currColor, 1);
         
-        glBindVertexArray(vertexArrayObjId);
+        vertexArray.bind();
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 

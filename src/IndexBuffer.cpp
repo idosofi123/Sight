@@ -1,6 +1,6 @@
 #include "IndexBuffer.hpp"
 
-IndexBuffer::IndexBuffer() {}
+IndexBuffer::IndexBuffer() : Buffer() {}
 
 IndexBuffer::~IndexBuffer() {}
 

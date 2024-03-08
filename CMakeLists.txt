@@ -10,8 +10,12 @@ set(SOURCE_FILE_LIST
 "src/Buffer.cpp"
 "src/VertexBuffer.hpp"
 "src/VertexBuffer.cpp"
+"src/VertexArray.hpp"
+"src/VertexArray.cpp"
 "src/IndexBuffer.hpp"
 "src/IndexBuffer.cpp"
+"src/VertexBufferLayout.hpp"
+"src/VertexBufferLayout.cpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})
