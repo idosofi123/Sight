@@ -6,6 +6,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(SOURCE_FILE_LIST
 "src/Main.cpp"
+"src/Buffer.hpp"
+"src/Buffer.cpp"
+"src/VertexBuffer.hpp"
+"src/VertexBuffer.cpp"
+"src/IndexBuffer.hpp"
+"src/IndexBuffer.cpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})
