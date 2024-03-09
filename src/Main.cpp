@@ -1,74 +1,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
 #include <format>
 #include <vector>
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
 #include "VertexArray.hpp"
-
-static std::string readShaderFile(const std::string &filePath) {
-
-    std::stringstream srcStream;
-    std::string line;
-    std::ifstream fileStream(filePath);
-
-    while (getline(fileStream, line)) {
-        srcStream << line << '\n';
-    }
-
-    return srcStream.str();
-}
-
-static unsigned int compileShader(unsigned int type, const std::string &src) {
-    
-    unsigned int shaderId = glCreateShader(type);
-    const auto rawSrc = src.c_str();
-    glShaderSource(shaderId, 1, &rawSrc, nullptr);
-    glCompileShader(shaderId);
-
-    int compileStatus;
-    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compileStatus);
-
-    if (compileStatus == GL_FALSE) {
-
-        int messageLength;
-        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
-        char* message = new char[messageLength];
-        glGetShaderInfoLog(shaderId, messageLength, &messageLength, message);
-
-        std::cout << "Failed to compile shader, OpenGL message: " << message << std::endl;
-        
-        glDeleteShader(shaderId);
-        delete[] message;
-
-        return 0;
-    }
-
-    return shaderId;
-}
-
-static unsigned int createShader(const std::string &vertexShaderSrc, const std::string &fragmentShaderSrc) {
-
-    unsigned int programId = glCreateProgram();
-    unsigned int vertexShaderId = compileShader(GL_VERTEX_SHADER, vertexShaderSrc);
-    unsigned int fragmentShaderId = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSrc);
-
-    glAttachShader(programId, vertexShaderId);
-    glAttachShader(programId, fragmentShaderId);
-
-    glLinkProgram(programId);
-    glValidateProgram(programId);
-
-    glDeleteShader(vertexShaderId);
-    glDeleteShader(fragmentShaderId);
-
-    return programId;
-}
+#include "Shader.hpp"
 
 static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
     
@@ -127,12 +67,11 @@ int main() {
     IndexBuffer indexBuffer;
     indexBuffer.setData(indices);
 
-    std::string vertSrc = readShaderFile(R"(assets/shaders/basic.vert)");
-    std::string fragSrc = readShaderFile(R"(assets/shaders/basic.frag)");
+    std::string vertSrc = Shader::readSourceFromFile(R"(assets/shaders/basic.vert)");
+    std::string fragSrc = Shader::readSourceFromFile(R"(assets/shaders/basic.frag)");
 
-    auto shaderId = createShader(vertSrc, fragSrc);
+    Shader basicShader(vertSrc, fragSrc);
 
-    int colorUniLoc = glGetUniformLocation(shaderId, "u_Color");
     float currColor = 0;
 
     glBindVertexArray(0);
@@ -148,8 +87,8 @@ int main() {
         currColor += 0.01f;
         currColor -= static_cast<int>(currColor);
 
-        glUseProgram(shaderId);
-        glUniform4f(colorUniLoc, currColor, currColor, currColor, 1);
+        basicShader.bind();
+        basicShader.setUnifromVec4("u_Color", currColor, currColor, 1, 1);
         
         vertexArray.bind();
 
@@ -162,7 +101,6 @@ int main() {
         glfwPollEvents();
     }
 
-    glDeleteProgram(shaderId);
     glfwTerminate();
     return 0;
 }
