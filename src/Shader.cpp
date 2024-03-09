@@ -36,7 +36,7 @@ void Shader::setUnifromVec4(const std::string &name, float a, float b, float c, 
 }
 
 int Shader::getUniformLocation(const std::string &name) {
-    if (this->uniformLocations.find(name) != this->uniformLocations.end()) {
+    if (this->uniformLocations.find(name) == this->uniformLocations.end()) {
         this->uniformLocations[name] = glGetUniformLocation(this->id, name.c_str());
     }
     return this->uniformLocations[name];
