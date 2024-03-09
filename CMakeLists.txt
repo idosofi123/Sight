@@ -18,6 +18,8 @@ set(SOURCE_FILE_LIST
 "src/VertexBufferLayout.cpp"
 "src/Shader.hpp"
 "src/Shader.cpp"
+"src/Renderer.hpp"
+"src/Renderer.cpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})

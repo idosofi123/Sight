@@ -9,6 +9,7 @@
 #include "VertexBufferLayout.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
+#include "Renderer.hpp"
 
 static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
     
@@ -72,6 +73,8 @@ int main() {
 
     Shader basicShader(vertSrc, fragSrc);
 
+    Renderer renderer;
+
     float currColor = 0;
 
     glBindVertexArray(0);
@@ -82,17 +85,13 @@ int main() {
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
 
         currColor += 0.01f;
         currColor -= static_cast<int>(currColor);
 
-        basicShader.bind();
         basicShader.setUnifromVec4("u_Color", currColor, currColor, 1, 1);
-        
-        vertexArray.bind();
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        renderer.draw(vertexArray, indexBuffer, basicShader);
 
         // Swap front and back buffers
         glfwSwapBuffers(window);

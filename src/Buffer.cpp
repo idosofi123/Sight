@@ -19,3 +19,7 @@ void Buffer::unbind() const {
 unsigned int Buffer::getId() const {
     return this->id;
 }
+
+unsigned int Buffer::getCount() const {
+    return this->count;
+}
