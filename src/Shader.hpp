@@ -15,7 +15,8 @@ public:
     ~Shader();
     void bind() const;
     void unbind() const;
-    void setUnifromVec4(const std::string &name, float a, float b, float c, float d);
+    void setUnifrom4f(const std::string &name, float a, float b, float c, float d);
+    void setUnifrom1i(const std::string &name, int value);
     
     static std::string readSourceFromFile(const std::string &filePath);
     static unsigned int compileShader(unsigned int type, const std::string &src);

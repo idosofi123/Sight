@@ -31,8 +31,12 @@ void Shader::unbind() const {
     glUseProgram(0);
 }
 
-void Shader::setUnifromVec4(const std::string &name, float a, float b, float c, float d) {
+void Shader::setUnifrom4f(const std::string &name, float a, float b, float c, float d) {
     glUniform4f(this->getUniformLocation(name), a, b, c, d);
+}
+
+void Shader::setUnifrom1i(const std::string &name, int value) {
+    glUniform1i(this->getUniformLocation(name), value);
 }
 
 int Shader::getUniformLocation(const std::string &name) {

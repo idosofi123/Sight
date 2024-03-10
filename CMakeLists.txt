@@ -20,6 +20,10 @@ set(SOURCE_FILE_LIST
 "src/Shader.cpp"
 "src/Renderer.hpp"
 "src/Renderer.cpp"
+"src/Texture.hpp"
+"src/Texture.cpp"
+"src/vendor/stb_image.h"
+"src/vendor/stb_image.cpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})
