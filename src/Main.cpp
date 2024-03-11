@@ -55,6 +55,10 @@ int main() {
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(messageCallback, 0);
 
+    // Configure blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     std::vector<float> positions{
         -0.5, -0.5, 0, 0,
         0.5, -0.5, 1, 0,
