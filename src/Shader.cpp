@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <memory>
 
 Shader::Shader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) {
 
@@ -74,14 +75,13 @@ unsigned int Shader::compileShader(unsigned int type, const std::string &src) {
 
         int messageLength;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
-
-        char* message = new char[messageLength];
-        glGetShaderInfoLog(shaderId, messageLength, &messageLength, message);
+        
+        auto message = std::make_unique<char[]>(messageLength);
+        glGetShaderInfoLog(shaderId, messageLength, &messageLength, message.get());
 
         std::cout << "Failed to compile shader, OpenGL message: " << message << std::endl;
         
         glDeleteShader(shaderId);
-        delete[] message;
 
         return 0;
     }
