@@ -12,6 +12,8 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {  
     static std::unordered_map<GLenum, std::string> seveities{
@@ -32,7 +34,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Sight", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Sight", NULL, NULL);
     
     if (!window) {
         glfwTerminate();
@@ -60,10 +62,10 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::vector<float> positions{
-        -0.5, -0.5, 0, 0,
-        0.5, -0.5, 1, 0,
-        0.5, 0.5, 1, 1,
-        -0.5, 0.5, 0, 1
+        -2, -1.5, 0, 0,
+        -1, -1.5, 1, 0,
+        -1, -0.5, 1, 0,
+        -2, -0.5, 1, 0,
     };
 
     VertexBuffer vertexBuffer;
@@ -89,11 +91,14 @@ int main() {
 
     Shader basicShader(vertSrc, fragSrc);
 
-    Texture texture(R"(assets/textures/alert.png)");
+    Texture texture(R"(assets/textures/box.png)");
     texture.bind();
 
     basicShader.bind();
     basicShader.setUnifrom1i("u_Texture", 0);
+
+    auto mat = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f);
+    basicShader.setUnifromMat4f("u_MVP", mat);
 
     Renderer renderer;
 
