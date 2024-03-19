@@ -35,6 +35,8 @@ int main() {
         return -1;
     }
 
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
     // Enable debug context
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
@@ -74,10 +76,10 @@ int main() {
     ImGuiIO& uiIo = ImGui::GetIO();
 
     std::vector<float> positions{
-        0.0f, 0.0f, 0.0f, 0.0f,
-        100.0f, 0.0f, 1.0f, 0.0f,
-        100.0f, 100.0f, 1.0f, 1.0f,
-        0.0f, 100.0f, 0.0f, 1.0f
+        -50.0f, -50.0f, 0.0f, 0.0f,
+        50.0f, -50.0f, 1.0f, 0.0f,
+        50.0f, 50.0f, 1.0f, 1.0f,
+        -50.0f, 50.0f, 0.0f, 1.0f
     };
 
     VertexBuffer vertexBuffer;
@@ -103,7 +105,7 @@ int main() {
 
     Shader basicShader(vertSrc, fragSrc);
 
-    Texture texture(R"(assets/textures/box.png)");
+    Texture texture(R"(assets/textures/alert.png)");
     texture.bind();
 
     basicShader.bind();
@@ -141,7 +143,7 @@ int main() {
 
         ImGui::Begin("Configuration");
         ImGui::Text("%.1f FPS", uiIo.Framerate);
-        ImGui::SliderFloat2("Position", &translationVec.x, 0, 600);            // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::SliderFloat2("Position", &translationVec.x, 0, 600);
         ImGui::End();
 
         ImGui::Render();
