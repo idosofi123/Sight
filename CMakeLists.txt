@@ -24,6 +24,14 @@ set(SOURCE_FILE_LIST
 "src/Texture.cpp"
 "src/vendor/stb_image.h"
 "src/vendor/stb_image.cpp"
+"src/tests/Test.hpp"
+"src/tests/Test.cpp"
+"src/tests/TestClearColor.hpp"
+"src/tests/TestClearColor.cpp"
+"src/tests/TestsLibrary.hpp"
+"src/tests/TestsLibrary.cpp"
+"src/tests/TestTexture2D.hpp"
+"src/tests/TestTexture2D.cpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})

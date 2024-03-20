@@ -4,6 +4,7 @@
 #include <string>
 #include <format>
 #include <vector>
+#include <memory>
 #include <unordered_map>
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
@@ -12,6 +13,9 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+#include "tests/TestsLibrary.hpp"
+#include "tests/TestClearColor.hpp"
+#include "tests/TestTexture2D.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
@@ -35,14 +39,14 @@ int main() {
         return -1;
     }
 
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
     // Enable debug context
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     // Create a windowed mode window and its OpenGL context
     GLFWwindow* window = glfwCreateWindow(800, 600, "Sight", NULL, NULL);
-    
+
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     if (!window) {
         glfwTerminate();
         return -1;
@@ -64,99 +68,24 @@ int main() {
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(messageCallback, 0);
 
-    // Configure blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     // UI setup
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
-    ImGuiIO& uiIo = ImGui::GetIO();
 
-    std::vector<float> positions{
-        -50.0f, -50.0f, 0.0f, 0.0f,
-        50.0f, -50.0f, 1.0f, 0.0f,
-        50.0f, 50.0f, 1.0f, 1.0f,
-        -50.0f, 50.0f, 0.0f, 1.0f
-    };
-
-    VertexBuffer vertexBuffer;
-    vertexBuffer.setData(positions);
-
-    VertexBufferLayout layout;
-    layout.addAttribute<float>(2, false);
-    layout.addAttribute<float>(2, false);
-
-    VertexArray vertexArray;
-    vertexArray.setBuffer(vertexBuffer, layout);
-
-    std::vector<unsigned int> indices{
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    IndexBuffer indexBuffer;
-    indexBuffer.setData(indices);
-
-    std::string vertSrc = Shader::readSourceFromFile(R"(assets/shaders/basic.vert)");
-    std::string fragSrc = Shader::readSourceFromFile(R"(assets/shaders/basic.frag)");
-
-    Shader basicShader(vertSrc, fragSrc);
-
-    Texture texture(R"(assets/textures/alert.png)");
-    texture.bind();
-
-    basicShader.bind();
-    basicShader.setUnifrom1i("u_Texture", 0);
-
-    auto projectionMat = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
-    auto viewMat = glm::translate(glm::mat4(1.0f), { 0.0f, 0.0f, 0.0f });
-    glm::vec3 translationVec{ 0.0f, 0.0f, 0.0f };
-
+    Tests::TestsLibrary testLibrary;
+    testLibrary.registerTest<Tests::TestClearColor>("Clear");
+    testLibrary.registerTest<Tests::TestTexture2D>("2D Texture");
+    
     Renderer renderer;
-
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // Loop until the user closes the window
-    while (!glfwWindowShouldClose(window)) {
-
-        // Poll for and process events
-        glfwPollEvents();
-
-        renderer.clear();
-
-        auto modelMat = glm::translate(glm::mat4(1.0f), translationVec);
-
-        basicShader.bind();
-        basicShader.setUnifromMat4f("u_MVP", projectionMat * viewMat * modelMat);
-
-        renderer.draw(vertexArray, indexBuffer, basicShader);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Configuration");
-        ImGui::Text("%.1f FPS", uiIo.Framerate);
-        ImGui::SliderFloat2("Position", &translationVec.x, 0, 600);
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Swap front and back buffers
-        glfwSwapBuffers(window);
-    }
+    testLibrary.run(window, renderer);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     glfwTerminate();
+
     return 0;
 }

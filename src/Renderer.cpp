@@ -15,6 +15,7 @@ void Renderer::draw(const VertexArray& vertexArray, const IndexBuffer& indexBuff
     glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void Renderer::clear() const {
+void Renderer::clear(float r, float g, float b, float a) const {
+    glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
