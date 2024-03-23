@@ -44,7 +44,7 @@ namespace Tests {
         glDisable(GL_BLEND);
     }
 
-    void TestTexture2D::update(float deltaTime) {
+    void TestTexture2D::update(double deltaTime) {
 
     }
 

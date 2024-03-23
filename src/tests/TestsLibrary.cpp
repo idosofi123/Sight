@@ -19,7 +19,7 @@ namespace Tests {
 
     void TestsLibrary::run(GLFWwindow* window, const Renderer &renderer) {
 
-        float deltaTime = 0;
+        float prevTime = glfwGetTime();
 
         while (!glfwWindowShouldClose(window)) {
 
@@ -30,12 +30,14 @@ namespace Tests {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            deltaTime = 0;
+            double currTime = glfwGetTime();
             if (this->chosenTest) {
-                this->chosenTest->update(deltaTime);
+                this->chosenTest->update(currTime - prevTime);
                 this->chosenTest->render(renderer);
                 this->chosenTest->renderUI();
             }
+
+            prevTime = currTime;
 
             ImGui::Begin("Test Library");
 

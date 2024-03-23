@@ -32,6 +32,7 @@ set(SOURCE_FILE_LIST
 "src/tests/TestsLibrary.cpp"
 "src/tests/TestTexture2D.hpp"
 "src/tests/TestTexture2D.cpp"
+"src/tests/Test3DCube.hpp"
 )
 
 add_executable(Sight ${SOURCE_FILE_LIST})

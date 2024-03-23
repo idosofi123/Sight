@@ -26,7 +26,7 @@ public:
     TestTexture2D();
     ~TestTexture2D();
 
-    virtual void update(float deltaTime) override;
+    virtual void update(double deltaTime) override;
     virtual void render(const Renderer &renderer) override;
     virtual void renderUI() override;
 };

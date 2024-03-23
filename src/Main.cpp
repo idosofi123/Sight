@@ -16,6 +16,7 @@
 #include "tests/TestsLibrary.hpp"
 #include "tests/TestClearColor.hpp"
 #include "tests/TestTexture2D.hpp"
+#include "tests/Test3DCube.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
@@ -77,6 +78,7 @@ int main() {
     Tests::TestsLibrary testLibrary;
     testLibrary.registerTest<Tests::TestClearColor>("Clear");
     testLibrary.registerTest<Tests::TestTexture2D>("2D Texture");
+    testLibrary.registerTest<Tests::Test3DCube>("3D Cube");
     
     Renderer renderer;
     testLibrary.run(window, renderer);
