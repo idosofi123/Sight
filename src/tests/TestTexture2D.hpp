@@ -10,25 +10,24 @@
 
 namespace Tests {
 
-class TestTexture2D : public Test {
+    class TestTexture2D : public Test {
 
-private:
-    VertexBuffer vertexBuffer;
-    IndexBuffer indexBuffer;
-    Shader shader;
-    VertexArray vertexArray;
-    glm::vec3 translation;
-    glm::mat4 projection;
-    glm::mat4 view;
-    Texture texture;
+    private:
+        VertexBuffer vertexBuffer;
+        IndexBuffer indexBuffer;
+        Shader shader;
+        VertexArray vertexArray;
+        glm::vec3 translation;
+        glm::mat4 projection;
+        glm::mat4 view;
+        Texture texture;
 
-public:
-    TestTexture2D();
-    ~TestTexture2D();
+    public:
+        TestTexture2D();
+        ~TestTexture2D();
 
-    virtual void update(double deltaTime) override;
-    virtual void render(const Renderer &renderer) override;
-    virtual void renderUI() override;
-};
+        virtual void render(const Renderer &renderer) override;
+        virtual void renderUI() override;
+    };
 
 }

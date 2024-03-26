@@ -32,6 +32,7 @@ namespace Tests {
 
             double currTime = glfwGetTime();
             if (this->chosenTest) {
+                this->chosenTest->handleInput(window);
                 this->chosenTest->update(currTime - prevTime);
                 this->chosenTest->render(renderer);
                 this->chosenTest->renderUI();

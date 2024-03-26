@@ -13,6 +13,7 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+#include "Configuration.hpp"
 #include "tests/TestsLibrary.hpp"
 #include "tests/TestClearColor.hpp"
 #include "tests/TestTexture2D.hpp"
@@ -44,7 +45,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Sight", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(Configuration::SCREEN_W, Configuration::SCREEN_H, "Sight", NULL, NULL);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 

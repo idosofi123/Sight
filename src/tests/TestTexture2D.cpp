@@ -11,7 +11,7 @@ namespace Tests {
             Shader::readSourceFromFile(R"(assets/shaders/basic.frag)")),
         texture(R"(assets/textures/alert.png)"),
         translation(0.0f, 0.0f, 0.0f),
-        projection(glm::ortho(0.0f, 800.0f, 0.0f, 600.0f)),
+        projection(glm::ortho(0.0f, static_cast<float>(Configuration::SCREEN_W), 0.0f, static_cast<float>(Configuration::SCREEN_H))),
         view(glm::translate(glm::mat4(1.0f), { 0.0f, 0.0f, 0.0f })) {
         
         this->vertexBuffer.setData<float>({
@@ -44,10 +44,6 @@ namespace Tests {
         glDisable(GL_BLEND);
     }
 
-    void TestTexture2D::update(double deltaTime) {
-
-    }
-
     void TestTexture2D::render(const Renderer &renderer) {
 
         renderer.clear(0, 0, 0, 1);
@@ -62,7 +58,7 @@ namespace Tests {
     void TestTexture2D::renderUI() {
         ImGui::Begin("Configuration");
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-        ImGui::SliderFloat2("Position", &this->translation.x, 0, 600);
+        ImGui::SliderFloat2("Position", &this->translation.x, 0, Configuration::SCREEN_W);
         ImGui::End();
     }
 

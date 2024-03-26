@@ -8,8 +8,12 @@
 #include "../VertexBuffer.hpp"
 #include "../VertexArray.hpp"
 #include "../Texture.hpp"
+#include "../Camera.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/rotate_vector.hpp>
 
 namespace Tests {
 
@@ -21,9 +25,9 @@ namespace Tests {
         Shader shader;
         VertexArray vertexArray;
         glm::vec3 model;
-        float yRotation;
-        glm::vec3 view;
-        glm::mat4 projection;
+        glm::vec3 cameraVelocity;
+        float rotation;
+        Camera camera;
         Texture texture;
 
     public:
@@ -33,22 +37,22 @@ namespace Tests {
                 Shader::readSourceFromFile(R"(assets/shaders/basic.vert)"),
                 Shader::readSourceFromFile(R"(assets/shaders/basic.frag)")),
             texture(R"(assets/textures/amitse.png)"),
-            projection(glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f)),
             model({0.0f, 0.0f, 0.0f}),
-            view({0.0f, 0.0f, -2.0f}),
-            yRotation(0.0f) {
+            rotation(0.0f),
+            camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
+            cameraVelocity({0.0f, 0.0f, 0.0f}) {
 
             glEnable(GL_DEPTH_TEST);
 
             vertexBuffer.setData<float>({
                 -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 0.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 1.0f,
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 0.0f, 1.0f
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+                -0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+                0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f
             });
 
             VertexBufferLayout layout;
@@ -83,19 +87,83 @@ namespace Tests {
 
         }
 
-        virtual void update(double deltaTime) override {
-            yRotation += deltaTime * 15.0f;
+        void handleInput(GLFWwindow* window) {
+
+            cameraVelocity = {0.0f, 0.0f, 0.0f};
+
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                cameraVelocity += camera.direction;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                cameraVelocity += glm::normalize(glm::cross(Camera::UP_VECTOR, camera.direction));
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                cameraVelocity += -camera.direction;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                cameraVelocity += glm::normalize(glm::cross(camera.direction, Camera::UP_VECTOR));
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                cameraVelocity += Camera::UP_VECTOR;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+                cameraVelocity += -Camera::UP_VECTOR;
+            }
+
+            if (glm::length(cameraVelocity) > 0.0f) {
+                cameraVelocity = 3.0f * glm::normalize(cameraVelocity);
+            }
+
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+                
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+                double mouseX, mouseY;
+                glfwGetCursorPos(window, &mouseX, &mouseY);
+
+                constexpr float SENSITIVITY = 30.0f;
+
+                float rotateX = (mouseX - (static_cast<float>(Configuration::SCREEN_W) / 2)) / Configuration::SCREEN_W;
+                float rotateY = (mouseY - (static_cast<float>(Configuration::SCREEN_H) / 2)) / Configuration::SCREEN_H;
+
+                camera.direction = glm::rotate(
+                    camera.direction,
+                    glm::radians(-rotateY * SENSITIVITY),
+                    glm::cross(camera.direction, Camera::UP_VECTOR));
+
+                camera.direction = glm::rotate(
+                    camera.direction,
+                    glm::radians(-rotateX * SENSITIVITY),
+                    Camera::UP_VECTOR);
+
+                glfwSetCursorPos(
+                    window,
+                    static_cast<double>(Configuration::SCREEN_W) / 2,
+                    static_cast<double>(Configuration::SCREEN_H) / 2);
+
+            } else {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+        }
+
+        virtual void update(float deltaTime) override {
+            rotation += deltaTime * 50.0f;
+            camera.position += deltaTime * cameraVelocity;
         }
 
         virtual void render(const Renderer &renderer) override {
+
             renderer.clear(0.1, 0.25, 0.9, 1);
             
-            auto modelMat = glm::translate(glm::mat4(1.0f), model);
-            modelMat = glm::rotate(modelMat, glm::radians(yRotation), glm::vec3(1.0f, 1.0f, 1.0f));
-            auto viewMat = glm::translate(glm::mat4(1.0f), view);
+            auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 
             this->shader.bind();
-            this->shader.setUnifromMat4f("u_MVP", projection * viewMat * modelMat);
+            this->shader.setUnifromMat4f("u_MVP", camera.getCameraMatrix() * modelMat);
 
             renderer.draw(this->vertexArray, this->indexBuffer, this->shader);
         }
@@ -104,6 +172,7 @@ namespace Tests {
             ImGui::Begin("Configuration");
             ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
             ImGui::SliderFloat3("Position", &model.x, -10.0f, 10.0f);
+            ImGui::Text("%.3f, %.3f, %.3f", camera.direction.x, camera.direction.y, camera.direction.z);
             ImGui::End();
         }
     };

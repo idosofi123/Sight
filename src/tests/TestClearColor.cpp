@@ -11,10 +11,6 @@ namespace Tests {
 
     }
 
-    void TestClearColor::update(double deltaTime) {
-
-    }
-
     void TestClearColor::render(const Renderer &renderer) {
         renderer.clear(1, 1, 1, 1);
     }
