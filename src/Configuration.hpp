@@ -2,6 +2,6 @@
 
 namespace Configuration {
 
-    constexpr unsigned int SCREEN_W = 800;
-    constexpr unsigned int SCREEN_H = 600;
+    constexpr unsigned int SCREEN_W = 1280;
+    constexpr unsigned int SCREEN_H = 720;
 };

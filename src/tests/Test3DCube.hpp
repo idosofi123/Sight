@@ -14,6 +14,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 namespace Tests {
 
@@ -29,6 +30,7 @@ namespace Tests {
         float rotation;
         Camera camera;
         Texture texture;
+        bool inDragMode = false;
 
     public:
 
@@ -120,26 +122,39 @@ namespace Tests {
             }
 
             if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-                
+
+                if (!inDragMode) {
+                    glfwSetCursorPos(
+                        window,
+                        static_cast<double>(Configuration::SCREEN_W) / 2,
+                        static_cast<double>(Configuration::SCREEN_H) / 2);
+                    inDragMode = true;   
+                }
+
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
                 double mouseX, mouseY;
                 glfwGetCursorPos(window, &mouseX, &mouseY);
 
-                constexpr float SENSITIVITY = 30.0f;
+                constexpr float SENSITIVITY = 50.0f;
+                constexpr float LIMIT_OFFSET = 3.0f;
 
                 float rotateX = (mouseX - (static_cast<float>(Configuration::SCREEN_W) / 2)) / Configuration::SCREEN_W;
                 float rotateY = (mouseY - (static_cast<float>(Configuration::SCREEN_H) / 2)) / Configuration::SCREEN_H;
 
-                camera.direction = glm::rotate(
+                glm::vec3 newDirection = glm::rotate(
                     camera.direction,
                     glm::radians(-rotateY * SENSITIVITY),
                     glm::cross(camera.direction, Camera::UP_VECTOR));
 
-                camera.direction = glm::rotate(
-                    camera.direction,
+                newDirection = glm::rotate(
+                    newDirection,
                     glm::radians(-rotateX * SENSITIVITY),
                     Camera::UP_VECTOR);
+
+                if (glm::angle(Camera::UP_VECTOR, newDirection) >= glm::radians(LIMIT_OFFSET) && glm::angle(-Camera::UP_VECTOR, newDirection) >= glm::radians(LIMIT_OFFSET)) {
+                    camera.direction = newDirection;
+                }
 
                 glfwSetCursorPos(
                     window,
@@ -148,6 +163,7 @@ namespace Tests {
 
             } else {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                inDragMode = false;
             }
         }
 
