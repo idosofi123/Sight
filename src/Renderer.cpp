@@ -8,11 +8,10 @@ Renderer::~Renderer() {
 
 }
 
-void Renderer::draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Shader& shader) const {
+void Renderer::draw(const VertexArray& vertexArray, const Shader& shader) const {
     vertexArray.bind();
-    indexBuffer.bind();
     shader.bind();
-    glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, vertexArray.getElementCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 void Renderer::clear(float r, float g, float b, float a) const {

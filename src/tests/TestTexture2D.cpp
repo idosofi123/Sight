@@ -21,18 +21,19 @@ namespace Tests {
             -50.0f, 50.0f, 0.0f, 1.0f
         });
 
-        VertexBufferLayout layout;
-        layout.addAttribute<float>(2, false);
-        layout.addAttribute<float>(2, false);
-
-        this->vertexArray.setBuffer(vertexBuffer, layout);
-
         this->indexBuffer.setData<unsigned int>({
             0, 1, 2,
             2, 3, 0
         });
 
+        VertexBufferLayout layout;
+        layout.addAttribute<float>(2, false);
+        layout.addAttribute<float>(2, false);
+
+        this->vertexArray.bindBuffers(vertexBuffer, layout, indexBuffer);
+
         this->texture.bind();
+        
         this->shader.bind();
         this->shader.setUnifrom1i("u_Texture", 0);
 
@@ -52,7 +53,7 @@ namespace Tests {
         this->shader.bind();
         this->shader.setUnifromMat4f("u_MVP", projection * view * modelMat);
 
-        renderer.draw(this->vertexArray, this->indexBuffer, this->shader);
+        renderer.draw(this->vertexArray, this->shader);
     }
 
     void TestTexture2D::renderUI() {

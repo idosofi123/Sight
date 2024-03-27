@@ -57,12 +57,6 @@ namespace Tests {
                 0.5f, 0.5f, -0.5f, 1.0f, 1.0f
             });
 
-            VertexBufferLayout layout;
-            layout.addAttribute<float>(3, false);
-            layout.addAttribute<float>(2, false);
-
-            vertexArray.setBuffer(vertexBuffer, layout);
-
             indexBuffer.setData<unsigned int>({
                 0, 1, 2,
                 2, 3, 0,
@@ -77,6 +71,12 @@ namespace Tests {
                 2, 3, 7,
                 7, 6, 2
             });
+
+            VertexBufferLayout layout;
+            layout.addAttribute<float>(3, false);
+            layout.addAttribute<float>(2, false);
+
+            vertexArray.bindBuffers(vertexBuffer, layout, indexBuffer);
 
             this->texture.bind();
 
@@ -121,7 +121,7 @@ namespace Tests {
                 cameraVelocity = 3.0f * glm::normalize(cameraVelocity);
             }
 
-            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
 
                 if (!inDragMode) {
                     glfwSetCursorPos(
@@ -176,12 +176,14 @@ namespace Tests {
 
             renderer.clear(0.1, 0.25, 0.9, 1);
             
+            this->vertexArray.bind();
+
             auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 
             this->shader.bind();
             this->shader.setUnifromMat4f("u_MVP", camera.getCameraMatrix() * modelMat);
 
-            renderer.draw(this->vertexArray, this->indexBuffer, this->shader);
+            renderer.draw(this->vertexArray, this->shader);
         }
 
         virtual void renderUI() override {
