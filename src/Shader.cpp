@@ -32,15 +32,19 @@ void Shader::unbind() const {
     glUseProgram(0);
 }
 
-void Shader::setUnifrom4f(const std::string &name, float a, float b, float c, float d) {
+void Shader::setUniform4f(const std::string &name, float a, float b, float c, float d) {
     glUniform4f(this->getUniformLocation(name), a, b, c, d);
 }
 
-void Shader::setUnifrom1i(const std::string &name, int value) {
+void Shader::setUniform3f(const std::string &name, float a, float b, float c) {
+    glUniform3f(this->getUniformLocation(name), a, b, c);
+}
+
+void Shader::setUniform1i(const std::string &name, int value) {
     glUniform1i(this->getUniformLocation(name), value);
 }
 
-void Shader::setUnifromMat4f(const std::string &name, const glm::mat4 &matrix) {
+void Shader::setUniformMat4f(const std::string &name, const glm::mat4 &matrix) {
     glUniformMatrix4fv(this->getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }
 

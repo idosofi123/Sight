@@ -35,7 +35,7 @@ namespace Tests {
         this->texture.bind();
         
         this->shader.bind();
-        this->shader.setUnifrom1i("u_Texture", 0);
+        this->shader.setUniform1i("u_Texture", 0);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -51,7 +51,7 @@ namespace Tests {
         auto modelMat = glm::translate(glm::mat4(1.0f), this->translation);
 
         this->shader.bind();
-        this->shader.setUnifromMat4f("u_MVP", projection * view * modelMat);
+        this->shader.setUniformMat4f("u_MVP", projection * view * modelMat);
 
         renderer.draw(this->vertexArray, this->shader);
     }

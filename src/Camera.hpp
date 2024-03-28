@@ -19,7 +19,8 @@ public:
     unsigned int width;
     unsigned int height;
 
-    glm::mat4 getCameraMatrix() const;
+    glm::mat4 getProjectionMatrix() const;
+    glm::mat4 getViewMatrix() const;
 
     static constexpr glm::vec3 UP_VECTOR{ 0.0f, 1.0f, 0.0f };
 };

@@ -16,9 +16,10 @@ public:
     ~Shader();
     void bind() const;
     void unbind() const;
-    void setUnifrom4f(const std::string &name, float a, float b, float c, float d);
-    void setUnifrom1i(const std::string &name, int value);
-    void setUnifromMat4f(const std::string &name, const glm::mat4 &matrix);
+    void setUniform4f(const std::string &name, float a, float b, float c, float d);
+    void setUniform3f(const std::string &name, float a, float b, float c);
+    void setUniform1i(const std::string &name, int value);
+    void setUniformMat4f(const std::string &name, const glm::mat4 &matrix);
     
     static std::string readSourceFromFile(const std::string &filePath);
     static unsigned int compileShader(unsigned int type, const std::string &src);

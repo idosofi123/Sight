@@ -7,11 +7,14 @@ Camera::Camera(glm::vec3 position, glm::vec3 direction, float fov, float nearThr
 
 Camera::~Camera() {}
 
-glm::mat4 Camera::getCameraMatrix() const {
+glm::mat4 Camera::getProjectionMatrix() const {
     return glm::perspective(
         glm::radians(this->fov),
         static_cast<float>(this->width) / this->height,
         this->nearThreshold,
-        this->farThreshold)
-        * glm::lookAt(this->position, this->position + this->direction, UP_VECTOR);
+        this->farThreshold);
+
+}
+glm::mat4 Camera::getViewMatrix() const {
+    return glm::lookAt(this->position, this->position + this->direction, UP_VECTOR);
 }

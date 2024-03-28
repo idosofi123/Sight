@@ -23,14 +23,22 @@ namespace Tests {
     private:
         VertexBuffer vertexBuffer;
         IndexBuffer indexBuffer;
-        Shader shader;
         VertexArray vertexArray;
+        Shader shader;
         glm::vec3 model;
+
+        VertexBuffer lightVBO;
+        IndexBuffer lightEBO;
+        VertexArray lightVAO;
+        Shader defaultShader;
+        glm::vec3 lightModel;
+
         glm::vec3 cameraVelocity;
         float rotation;
         Camera camera;
         Texture texture;
         bool inDragMode = false;
+        glm::vec4 lightColor{1.0f, 1.0f, 1.0f, 1.0f};
 
     public:
 
@@ -38,26 +46,91 @@ namespace Tests {
             shader(
                 Shader::readSourceFromFile(R"(assets/shaders/basic.vert)"),
                 Shader::readSourceFromFile(R"(assets/shaders/basic.frag)")),
-            texture(R"(assets/textures/amitse.png)"),
-            model({0.0f, 0.0f, 0.0f}),
+            defaultShader(
+                Shader::readSourceFromFile(R"(assets/shaders/light.vert)"),
+                Shader::readSourceFromFile(R"(assets/shaders/light.frag)")),
+            texture(R"(assets/textures/romi.png)"),
+            model({0.0f, 0.f, 0.0f}),
+            lightModel({3.0f, 3.0f, 0.0f}),
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}) {
 
             glEnable(GL_DEPTH_TEST);
 
+            // Textured cube initiation
             vertexBuffer.setData<float>({
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f, 1.0f
+
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+                -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+
+                -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+
+                0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+                0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+                -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+
+                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f
             });
 
             indexBuffer.setData<unsigned int>({
+                0, 1, 2,
+                2, 3, 0,
+
+                4, 5, 6,
+                6, 7, 4,
+
+                8, 9, 10,
+                10, 11, 8,
+
+                12, 13, 14,
+                14, 15, 12,
+
+                16, 17, 18,
+                18, 19, 16,
+
+                20, 21, 22,
+                22, 23, 20
+            });
+
+            VertexBufferLayout layout;
+            layout.addAttribute<float>(3, false);
+            layout.addAttribute<float>(2, false);
+            layout.addAttribute<float>(3, false);
+
+            vertexArray.bindBuffers(vertexBuffer, layout, indexBuffer);
+
+            lightVBO.setData<float>({
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f
+            });
+
+            lightEBO.setData<unsigned int>({
                 0, 1, 2,
                 2, 3, 0,
                 4, 5, 6,
@@ -72,16 +145,19 @@ namespace Tests {
                 7, 6, 2
             });
 
-            VertexBufferLayout layout;
-            layout.addAttribute<float>(3, false);
-            layout.addAttribute<float>(2, false);
+            VertexBufferLayout defaultLayout;
+            defaultLayout.addAttribute<float>(3, false);
 
-            vertexArray.bindBuffers(vertexBuffer, layout, indexBuffer);
+            lightVAO.bindBuffers(lightVBO, defaultLayout, lightEBO);
 
             this->texture.bind();
 
-            this->shader.bind();
-            this->shader.setUnifrom1i("u_Texture", 0);
+            shader.bind();
+            shader.setUniform1i("u_Texture", 0);
+            shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+
+            defaultShader.bind();
+            defaultShader.setUniform4f("u_Color", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 
         }
         
@@ -180,17 +256,30 @@ namespace Tests {
 
             auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 
-            this->shader.bind();
-            this->shader.setUnifromMat4f("u_MVP", camera.getCameraMatrix() * modelMat);
+            shader.bind();
+            shader.setUniformMat4f("u_Model", modelMat);
+            shader.setUniformMat4f("u_View", camera.getViewMatrix());
+            shader.setUniformMat4f("u_Projection", camera.getProjectionMatrix());
+            shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+            shader.setUniform3f("u_LightPosition", lightModel.x, lightModel.y, lightModel.z);
 
             renderer.draw(this->vertexArray, this->shader);
+
+            auto lightModelMat = glm::translate(glm::mat4(1.0f), lightModel);
+
+            defaultShader.bind();
+            defaultShader.setUniformMat4f("u_MVP", camera.getProjectionMatrix() * camera.getViewMatrix() * lightModelMat);
+            defaultShader.setUniform4f("u_Color", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+
+            renderer.draw(lightVAO, defaultShader);
         }
 
         virtual void renderUI() override {
             ImGui::Begin("Configuration");
             ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
             ImGui::SliderFloat3("Position", &model.x, -10.0f, 10.0f);
-            ImGui::Text("%.3f, %.3f, %.3f", camera.direction.x, camera.direction.y, camera.direction.z);
+            ImGui::SliderFloat3("Light Position", &lightModel.x, -10.0f, 10.0f);
+            ImGui::ColorPicker4("Light Color", &lightColor.x);
             ImGui::End();
         }
     };
