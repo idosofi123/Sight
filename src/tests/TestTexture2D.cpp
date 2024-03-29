@@ -51,7 +51,9 @@ namespace Tests {
         auto modelMat = glm::translate(glm::mat4(1.0f), this->translation);
 
         this->shader.bind();
-        this->shader.setUniformMat4f("u_MVP", projection * view * modelMat);
+        this->shader.setUniformMat4f("u_Model", modelMat);
+        this->shader.setUniformMat4f("u_View", view);
+        this->shader.setUniformMat4f("u_Projection", projection);
 
         renderer.draw(this->vertexArray, this->shader);
     }

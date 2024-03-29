@@ -250,7 +250,7 @@ namespace Tests {
 
         virtual void render(const Renderer &renderer) override {
 
-            renderer.clear(0.1, 0.25, 0.9, 1);
+            renderer.clear(0.027, 0.052, 0.09, 1);
             
             this->vertexArray.bind();
 
@@ -262,6 +262,7 @@ namespace Tests {
             shader.setUniformMat4f("u_Projection", camera.getProjectionMatrix());
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
             shader.setUniform3f("u_LightPosition", lightModel.x, lightModel.y, lightModel.z);
+            shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
 
             renderer.draw(this->vertexArray, this->shader);
 
