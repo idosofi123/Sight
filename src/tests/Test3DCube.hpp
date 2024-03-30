@@ -250,7 +250,7 @@ namespace Tests {
         }
 
         virtual void update(float deltaTime) override {
-            rotation += deltaTime * 50.0f;
+            rotation += deltaTime * 30.0f;
             camera.position += deltaTime * cameraVelocity;
         }
 
@@ -260,7 +260,7 @@ namespace Tests {
             
             this->vertexArray.bind();
 
-            auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
+            auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
             shader.bind();
             shader.setUniformMat4f("u_Model", modelMat);
@@ -269,7 +269,7 @@ namespace Tests {
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
             shader.setUniform3f("u_LightPosition", lightModel.x, lightModel.y, lightModel.z);
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
-            shader.setUniform3f("u_SpotLightDirection", camera.direction.x, camera.direction.y, camera.direction.z);
+            shader.setUniform3f("u_SpotLightDirection", -1, 0, 0);
 
             renderer.draw(this->vertexArray, this->shader);
 

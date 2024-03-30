@@ -53,20 +53,33 @@ vec4 pointLight(float fragmentShininess) {
     return (ambientStrength + diffuse * attenuation + fragmentShininess * specularStrength * specular * attenuation) * u_LightColor;
 }
 
-vec4 spotLight(float fragmentShininess) {
+vec4 pointLightNonAmb(float fragmentShininess) {
 
-    float ambientStrength = 0.2;
     float specularStrength = 2;
     float shininess = 16;
 
-    vec3 lightToFragDirection = normalize(v_Position - u_CameraPosition);
-    float inten = clamp((dot(lightToFragDirection, u_SpotLightDirection) - u_outerConeCos) / (u_innerConeCos - u_outerConeCos), 0.0, 1.0);
+    vec3 toLightVector = u_LightPosition - v_Position;
+    float distance = length(toLightVector);
+    float a = 0.05;
+    float b = 0.05;
+    float attenuation = 1 / (a * distance * distance + b * distance + 1.0);
 
-    vec3 reflectionDirection = reflect(lightToFragDirection, v_Normal);
+    vec3 toLightDirection = normalize(toLightVector);
+    float diffuse = max(dot(v_Normal, toLightDirection), 0);
+    vec3 reflectionDirection = reflect(-toLightDirection, v_Normal);
     vec3 viewDirection = normalize(u_CameraPosition - v_Position);
     float specular = pow(max(dot(viewDirection, reflectionDirection), 0), shininess);
 
-    return (ambientStrength + inten + fragmentShininess * specularStrength * specular * inten) * u_LightColor;
+    return (diffuse * attenuation + fragmentShininess * specularStrength * specular * attenuation) * u_LightColor;
+}
+
+vec4 spotLight(float fragmentShininess) {
+
+    float ambientStrength = 0.2;
+    vec3 lightToFragDirection = normalize(v_Position - u_LightPosition);
+    float inten = clamp((dot(lightToFragDirection, u_SpotLightDirection) - u_outerConeCos) / (u_innerConeCos - u_outerConeCos), 0.0, 1.0);
+
+    return (inten + ambientStrength) * pointLightNonAmb(fragmentShininess);
 }
 
 void main() {
