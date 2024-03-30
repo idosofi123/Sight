@@ -37,6 +37,7 @@ namespace Tests {
         float rotation;
         Camera camera;
         Texture texture;
+        Texture specularMap;
         bool inDragMode = false;
         glm::vec4 lightColor{1.0f, 1.0f, 1.0f, 1.0f};
 
@@ -49,9 +50,10 @@ namespace Tests {
             defaultShader(
                 Shader::readSourceFromFile(R"(assets/shaders/light.vert)"),
                 Shader::readSourceFromFile(R"(assets/shaders/light.frag)")),
-            texture(R"(assets/textures/romi.png)"),
+            texture(R"(assets/textures/box.png)"),
+            specularMap(R"(assets/textures/boxspecular.png)"),
             model({0.0f, 0.f, 0.0f}),
-            lightModel({3.0f, 3.0f, 0.0f}),
+            lightModel({3.0f, 0.0f, 0.0f}),
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}) {
@@ -151,10 +153,14 @@ namespace Tests {
             lightVAO.bindBuffers(lightVBO, defaultLayout, lightEBO);
 
             this->texture.bind();
+            specularMap.bind(1);
 
             shader.bind();
             shader.setUniform1i("u_Texture", 0);
+            shader.setUniform1i("u_SpecularMap", 1);
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+            shader.setUniform1f("u_innerConeCos", glm::cos(glm::radians(5.0f)));
+            shader.setUniform1f("u_outerConeCos", glm::cos(glm::radians(10.0f)));
 
             defaultShader.bind();
             defaultShader.setUniform4f("u_Color", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -263,6 +269,7 @@ namespace Tests {
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
             shader.setUniform3f("u_LightPosition", lightModel.x, lightModel.y, lightModel.z);
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
+            shader.setUniform3f("u_SpotLightDirection", camera.direction.x, camera.direction.y, camera.direction.z);
 
             renderer.draw(this->vertexArray, this->shader);
 

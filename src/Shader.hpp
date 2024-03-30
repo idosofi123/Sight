@@ -18,6 +18,7 @@ public:
     void unbind() const;
     void setUniform4f(const std::string &name, float a, float b, float c, float d);
     void setUniform3f(const std::string &name, float a, float b, float c);
+    void setUniform1f(const std::string &name, float a);
     void setUniform1i(const std::string &name, int value);
     void setUniformMat4f(const std::string &name, const glm::mat4 &matrix);
     
