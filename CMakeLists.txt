@@ -109,6 +109,16 @@ target_link_libraries(imgui PRIVATE glfw)
 
 target_link_libraries(Sight PUBLIC imgui)
 
+# Installing Assimp
+FetchContent_Declare(
+  assimp
+  GIT_REPOSITORY https://github.com/assimp/assimp.git
+  GIT_TAG v5.3.1
+)
+
+FetchContent_MakeAvailable(assimp)
+target_link_libraries(Sight PRIVATE assimp)
+
 # Copy assets folder to build
 add_custom_command(
     TARGET Sight

@@ -6,5 +6,5 @@
 class Drawable {
     
     public:
-        virtual void draw(const Renderer &renderer, Shader &shader) = 0;
+        virtual void draw(const Renderer &renderer, Shader &shader) const = 0;
 };

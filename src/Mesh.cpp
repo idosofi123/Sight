@@ -16,7 +16,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 }
 
-void Mesh::draw(const Renderer &renderer, Shader &shader) {
+void Mesh::draw(const Renderer &renderer, Shader &shader) const {
 
     std::vector<int> textureIds(this->textures.size()), specularMapIds(this->textures.size());
     int slot = 0;
