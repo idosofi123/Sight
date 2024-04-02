@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include "vendor/stb_image.h"
 #include <memory>
+#include <iostream>
 
 Texture::Texture(const std::string &filePath) {
 
@@ -18,6 +19,15 @@ Texture::Texture(const std::string &filePath) {
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData.get());
     glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+Texture::Texture(Texture &&texture) :
+    id(texture.id),  
+    width(texture.width),
+    height(texture.height),  
+    bytesPerPixel(texture.bytesPerPixel) {
+        
+    texture.id = 0;
 }
 
 Texture::~Texture() {
@@ -39,4 +49,8 @@ int Texture::getWidth() const {
 
 int Texture::getHeight() const {
     return this->height;
+}
+
+unsigned int Texture::getId() const {
+    return this->id;
 }

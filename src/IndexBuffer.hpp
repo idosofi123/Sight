@@ -14,7 +14,7 @@ public:
     ~IndexBuffer();
 
     template <typename T>
-    void setData(const std::vector<T> &data) {
+    void setData(std::vector<T> data) {
         static_assert(std::is_same<T, unsigned int>::value, "Index buffers can only store indices, represnted as unsigned ints.");
         Buffer::setData(data);
     }

@@ -52,6 +52,10 @@ void Shader::setUniformMat4f(const std::string &name, const glm::mat4 &matrix) {
     glUniformMatrix4fv(this->getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }
 
+void Shader::setUniform1iArr(const std::string &name, const std::vector<int> arr) {
+    glUniform1iv(this->getUniformLocation(name), arr.size(), arr.data());
+}
+
 int Shader::getUniformLocation(const std::string &name) {
     if (this->uniformLocations.find(name) == this->uniformLocations.end()) {
         this->uniformLocations[name] = glGetUniformLocation(this->id, name.c_str());

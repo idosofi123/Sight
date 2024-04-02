@@ -7,6 +7,7 @@
 #include "../IndexBuffer.hpp"
 #include "../VertexBuffer.hpp"
 #include "../VertexArray.hpp"
+#include "../Mesh.hpp"
 #include "../Texture.hpp"
 #include "../Camera.hpp"
 #include <glm/glm.hpp>
@@ -21,12 +22,10 @@ namespace Tests {
     class Test3DCube : public Test {
 
     private:
-        VertexBuffer vertexBuffer;
-        IndexBuffer indexBuffer;
-        VertexArray vertexArray;
+
         Shader shader;
         glm::vec3 model;
-
+        Mesh mesh;
         VertexBuffer lightVBO;
         IndexBuffer lightEBO;
         VertexArray lightVAO;
@@ -36,8 +35,6 @@ namespace Tests {
         glm::vec3 cameraVelocity;
         float rotation;
         Camera camera;
-        Texture texture;
-        Texture specularMap;
         bool inDragMode = false;
         glm::vec4 lightColor{1.0f, 1.0f, 1.0f, 1.0f};
 
@@ -50,76 +47,70 @@ namespace Tests {
             defaultShader(
                 Shader::readSourceFromFile(R"(assets/shaders/light.vert)"),
                 Shader::readSourceFromFile(R"(assets/shaders/light.frag)")),
-            texture(R"(assets/textures/box.png)"),
-            specularMap(R"(assets/textures/boxspecular.png)"),
+            mesh(
+                {
+                    {{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+                    {{-0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
+                    {{0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
+                    {{0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+
+                    {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+                    {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+                    {{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+                    {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+
+                    {{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+                    {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+                    {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+                    {{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+
+                    {{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+                    {{-0.5f, -0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+                    {{-0.5f, 0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+                    {{-0.5f, 0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+
+                    {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+                    {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+                    {{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+                    {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+
+                    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
+                    {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
+                    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
+                    {{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}}
+                },
+                {                
+                    0, 1, 2,
+                    2, 3, 0,
+
+                    4, 5, 6,
+                    6, 7, 4,
+
+                    8, 9, 10,
+                    10, 11, 8,
+
+                    12, 13, 14,
+                    14, 15, 12,
+
+                    16, 17, 18,
+                    18, 19, 16,
+
+                    20, 21, 22,
+                    22, 23, 20
+                },
+                {}
+            ),
             model({0.0f, 0.f, 0.0f}),
             lightModel({3.0f, 0.0f, 0.0f}),
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}) {
 
+            std::vector<std::pair<Texture, Texture>> arr;
+            arr.push_back({Texture{R"(assets/textures/box.png)"}, Texture{R"(assets/textures/boxspecular.png)"}});
+            mesh.setTextures(std::move(arr));
+
             glEnable(GL_DEPTH_TEST);
-
-            // Textured cube initiation
-            vertexBuffer.setData<float>({
-
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-
-                -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-                0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-
-                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
-                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f
-            });
-
-            indexBuffer.setData<unsigned int>({
-                0, 1, 2,
-                2, 3, 0,
-
-                4, 5, 6,
-                6, 7, 4,
-
-                8, 9, 10,
-                10, 11, 8,
-
-                12, 13, 14,
-                14, 15, 12,
-
-                16, 17, 18,
-                18, 19, 16,
-
-                20, 21, 22,
-                22, 23, 20
-            });
-
-            VertexBufferLayout layout;
-            layout.addAttribute<float>(3, false);
-            layout.addAttribute<float>(2, false);
-            layout.addAttribute<float>(3, false);
-
-            vertexArray.bindBuffers(vertexBuffer, layout, indexBuffer);
 
             lightVBO.setData<float>({
                 -0.5f, -0.5f, -0.5f,
@@ -151,9 +142,6 @@ namespace Tests {
             defaultLayout.addAttribute<float>(3, false);
 
             lightVAO.bindBuffers(lightVBO, defaultLayout, lightEBO);
-
-            this->texture.bind();
-            specularMap.bind(1);
 
             shader.bind();
             shader.setUniform1i("u_Texture", 0);
@@ -257,8 +245,6 @@ namespace Tests {
         virtual void render(const Renderer &renderer) override {
 
             renderer.clear(0.027, 0.052, 0.09, 1);
-            
-            this->vertexArray.bind();
 
             auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -271,7 +257,7 @@ namespace Tests {
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
             shader.setUniform3f("u_SpotLightDirection", -1, 0, 0);
 
-            renderer.draw(this->vertexArray, this->shader);
+            mesh.draw(renderer, shader);
 
             auto lightModelMat = glm::translate(glm::mat4(1.0f), lightModel);
 

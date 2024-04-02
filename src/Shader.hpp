@@ -2,6 +2,7 @@
 #include <string>
 #include <GL/glew.h>
 #include <unordered_map>
+#include <vector>
 #include <glm/glm.hpp>
 
 class Shader {
@@ -21,6 +22,7 @@ public:
     void setUniform1f(const std::string &name, float a);
     void setUniform1i(const std::string &name, int value);
     void setUniformMat4f(const std::string &name, const glm::mat4 &matrix);
+    void setUniform1iArr(const std::string &name, const std::vector<int> arr);
     
     static std::string readSourceFromFile(const std::string &filePath);
     static unsigned int compileShader(unsigned int type, const std::string &src);

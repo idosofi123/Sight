@@ -20,7 +20,7 @@ public:
     unsigned int getCount() const;
 
     template <typename T>
-    void setData(const std::vector<T> &data) {
+    void setData(std::vector<T> data) {
         this->bind();
         glBufferData(this->getGLType(), sizeof(T) * data.size(), data.data(), GL_STATIC_DRAW);
         this->count = data.size();
