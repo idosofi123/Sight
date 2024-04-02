@@ -23,6 +23,10 @@ private:
 
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::pair<Texture, Texture>> textures);
+    Mesh(Mesh&&);
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
+    Mesh& operator=(Mesh&&) = delete;
     virtual void draw(const Renderer &renderer, Shader &shader) const override;
     ~Mesh();
 

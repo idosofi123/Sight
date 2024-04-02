@@ -4,6 +4,10 @@ Buffer::Buffer() {
     glGenBuffers(1, &this->id);
 }
 
+Buffer::Buffer(Buffer &&buffer) : id(buffer.id), count(buffer.count) {
+    buffer.id = 0;
+}
+
 Buffer::~Buffer() {
     glDeleteBuffers(1, &this->id);
 }

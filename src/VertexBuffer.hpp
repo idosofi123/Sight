@@ -10,6 +10,7 @@ protected:
 
 public:
     VertexBuffer();
+    VertexBuffer(VertexBuffer &&buffer) : Buffer(std::move(buffer)) {}
     ~VertexBuffer();
     
 };

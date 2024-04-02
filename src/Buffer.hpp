@@ -13,6 +13,10 @@ protected:
 
 public:
     Buffer();
+    Buffer(Buffer&&);
+    Buffer(const Buffer&) = delete;
+    Buffer& operator=(Buffer&&) = delete;
+    Buffer& operator=(const Buffer&) = delete;
     ~Buffer();
     void bind() const;
     void unbind() const;

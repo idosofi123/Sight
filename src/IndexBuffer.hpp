@@ -11,6 +11,7 @@ protected:
 
 public:
     IndexBuffer();
+    IndexBuffer(IndexBuffer &&buffer) : Buffer(std::move(buffer)) {}
     ~IndexBuffer();
 
     template <typename T>

@@ -4,6 +4,10 @@ VertexArray::VertexArray(const VertexBuffer &buffer, const VertexBufferLayout &l
     this->bindBuffers(buffer, layout, indexBuffer);
 }
 
+VertexArray::VertexArray(VertexArray &&vao) : id(vao.id), elementCount(vao.elementCount), vertexCount(vao.vertexCount) {
+    vao.id = 0;
+}
+
 VertexArray::VertexArray() {
     glGenVertexArrays(1, &this->id);
 }

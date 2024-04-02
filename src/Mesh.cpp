@@ -16,6 +16,16 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 }
 
+Mesh::Mesh(Mesh &&mesh) : 
+    vertexBuffer(std::move(mesh.vertexBuffer)), 
+    indexBuffer(std::move(mesh.indexBuffer)), 
+    vertexArray(std::move(mesh.vertexArray)), 
+    textures(std::move(mesh.textures)) {
+
+}
+
+// Mesh::Mesh(Mesh &&) {}
+
 void Mesh::draw(const Renderer &renderer, Shader &shader) const {
 
     std::vector<int> textureIds(this->textures.size()), specularMapIds(this->textures.size());
