@@ -24,8 +24,6 @@ Mesh::Mesh(Mesh &&mesh) :
 
 }
 
-// Mesh::Mesh(Mesh &&) {}
-
 void Mesh::draw(const Renderer &renderer, Shader &shader) const {
 
     std::vector<int> textureIds(this->textures.size()), specularMapIds(this->textures.size());

@@ -12,6 +12,10 @@ Model::Model(const std::string& filePath) : directoryPath(filePath.substr(0, fil
     this->processNode(scene->mRootNode, scene);
 }
 
+Model::Model(Model &&model) : meshes(std::move(model.meshes)), directoryPath(std::move(model.directoryPath)) {
+
+}
+
 Model::~Model() {
 
 }
@@ -67,7 +71,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
             specularPath.assign(aiPath.C_Str(), aiPath.length);
         }
 
-        // textures.push_back(std::pair<Texture, Texture>{ Texture(this->directoryPath + diffusePath), Texture(this->directoryPath + specularPath) });
+        textures.push_back(std::pair<Texture, Texture>{ Texture(this->directoryPath + diffusePath), Texture(this->directoryPath + specularPath) });
     }
 
     return Mesh(std::move(vertices), std::move(indices), std::move(textures));

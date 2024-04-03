@@ -18,6 +18,10 @@ class Model : public Drawable {
 
     public:
         Model(const std::string &filePath);
+        Model(Model&&);
+        Model(const Model&) = delete;
+        Model& operator=(const Model&) = delete;
+        Model& operator=(Model&&) = delete;
         virtual void draw(const Renderer &renderer, Shader &shader) const override;
         ~Model();
 };

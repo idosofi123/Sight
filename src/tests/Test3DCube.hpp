@@ -9,6 +9,7 @@
 #include "../VertexArray.hpp"
 #include "../Mesh.hpp"
 #include "../Texture.hpp"
+#include "../Model.hpp"
 #include "../Camera.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,6 +27,7 @@ namespace Tests {
         Shader shader;
         glm::vec3 model;
         Mesh mesh;
+        Model bagModel;
         VertexBuffer lightVBO;
         IndexBuffer lightEBO;
         VertexArray lightVAO;
@@ -104,7 +106,8 @@ namespace Tests {
             lightModel({3.0f, 0.0f, 0.0f}),
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
-            cameraVelocity({0.0f, 0.0f, 0.0f}) {
+            cameraVelocity({0.0f, 0.0f, 0.0f}),
+            bagModel(R"(assets/models/backpack/backpack.obj)") {
 
             std::vector<std::pair<Texture, Texture>> arr;
             arr.push_back({Texture{R"(assets/textures/box.png)"}, Texture{R"(assets/textures/boxspecular.png)"}});
@@ -144,8 +147,6 @@ namespace Tests {
             lightVAO.bindBuffers(lightVBO, defaultLayout, lightEBO);
 
             shader.bind();
-            shader.setUniform1i("u_Texture", 0);
-            shader.setUniform1i("u_SpecularMap", 1);
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
             shader.setUniform1f("u_innerConeCos", glm::cos(glm::radians(5.0f)));
             shader.setUniform1f("u_outerConeCos", glm::cos(glm::radians(10.0f)));
@@ -257,7 +258,8 @@ namespace Tests {
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
             shader.setUniform3f("u_SpotLightDirection", -1, 0, 0);
 
-            mesh.draw(renderer, shader);
+            // mesh.draw(renderer, shader);
+            bagModel.draw(renderer, shader);
 
             auto lightModelMat = glm::translate(glm::mat4(1.0f), lightModel);
 
