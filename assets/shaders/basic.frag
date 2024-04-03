@@ -84,5 +84,5 @@ vec4 spotLight(float fragmentShininess) {
 }
 
 void main() {
-    color = texture(u_Textures[v_TextureIndex], v_TextureCoord) * spotLight(texture(u_SpecularMaps[v_TextureIndex], v_TextureCoord).r);
+    color = texture(u_Textures[v_TextureIndex], v_TextureCoord) * directionalLight(texture(u_SpecularMaps[v_TextureIndex], v_TextureCoord).r);
 } 

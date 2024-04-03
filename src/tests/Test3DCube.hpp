@@ -251,8 +251,8 @@ namespace Tests {
 
             shader.bind();
             shader.setUniformMat4f("u_Model", modelMat);
-            shader.setUniformMat4f("u_View", camera.getViewMatrix());
-            shader.setUniformMat4f("u_Projection", camera.getProjectionMatrix());
+            shader.setUniformMat4f("u_ModelTi", glm::transpose(glm::inverse(modelMat)));
+            shader.setUniformMat4f("u_MVP", camera.getProjectionMatrix() * camera.getViewMatrix() * modelMat);
             shader.setUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
             shader.setUniform3f("u_LightPosition", lightModel.x, lightModel.y, lightModel.z);
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
