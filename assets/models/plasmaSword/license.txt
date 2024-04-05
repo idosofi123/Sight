@@ -1,0 +1,11 @@
+Model Information:
+* title:	Plasma Sword
+* source:	https://sketchfab.com/3d-models/plasma-sword-62f978cb483e4090bb7a46d277698425
+* author:	nervouscloud (https://sketchfab.com/nervouscloud)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Plasma Sword" (https://sketchfab.com/3d-models/plasma-sword-62f978cb483e4090bb7a46d277698425) by nervouscloud (https://sketchfab.com/nervouscloud) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

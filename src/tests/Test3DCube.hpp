@@ -53,7 +53,7 @@ namespace Tests {
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}),
-            bagModel(R"(assets/models/backpack/backpack.obj)") {
+            bagModel(R"(assets/models/plasmaSword/scene.gltf)") {
 
             glEnable(GL_DEPTH_TEST);
 
@@ -189,7 +189,7 @@ namespace Tests {
 
             renderer.clear(0.027, 0.052, 0.09, 1);
 
-            auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+            auto modelMat = glm::rotate(glm::translate(glm::mat4(1.0f), model), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 
             shader.bind();
             shader.setUniformMat4f("u_Model", modelMat);
