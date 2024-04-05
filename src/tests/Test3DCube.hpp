@@ -26,7 +26,6 @@ namespace Tests {
 
         Shader shader;
         glm::vec3 model;
-        Mesh mesh;
         Model bagModel;
         VertexBuffer lightVBO;
         IndexBuffer lightEBO;
@@ -49,69 +48,12 @@ namespace Tests {
             defaultShader(
                 Shader::readSourceFromFile(R"(assets/shaders/light.vert)"),
                 Shader::readSourceFromFile(R"(assets/shaders/light.frag)")),
-            mesh(
-                {
-                    {{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
-                    {{-0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
-                    {{0.5f, -0.5f, 0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
-                    {{0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-
-                    {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-                    {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-                    {{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-                    {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-
-                    {{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-                    {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-                    {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-                    {{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-
-                    {{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-                    {{-0.5f, -0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-                    {{-0.5f, 0.5f, 0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-                    {{-0.5f, 0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-
-                    {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
-                    {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-                    {{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-                    {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-
-                    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
-                    {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
-                    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
-                    {{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}}
-                },
-                {                
-                    0, 1, 2,
-                    2, 3, 0,
-
-                    4, 5, 6,
-                    6, 7, 4,
-
-                    8, 9, 10,
-                    10, 11, 8,
-
-                    12, 13, 14,
-                    14, 15, 12,
-
-                    16, 17, 18,
-                    18, 19, 16,
-
-                    20, 21, 22,
-                    22, 23, 20
-                },
-                {}
-            ),
             model({0.0f, 0.f, 0.0f}),
             lightModel({3.0f, 0.0f, 0.0f}),
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}),
             bagModel(R"(assets/models/backpack/backpack.obj)") {
-
-            std::vector<std::pair<Texture, Texture>> arr;
-            arr.push_back({Texture{R"(assets/textures/box.png)"}, Texture{R"(assets/textures/boxspecular.png)"}});
-            mesh.setTextures(std::move(arr));
 
             glEnable(GL_DEPTH_TEST);
 
@@ -258,7 +200,6 @@ namespace Tests {
             shader.setUniform3f("u_CameraPosition", camera.position.x, camera.position.y, camera.position.z);
             shader.setUniform3f("u_SpotLightDirection", -1, 0, 0);
 
-            // mesh.draw(renderer, shader);
             bagModel.draw(renderer, shader);
 
             auto lightModelMat = glm::translate(glm::mat4(1.0f), lightModel);

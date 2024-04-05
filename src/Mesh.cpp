@@ -1,7 +1,10 @@
 #include "Mesh.hpp"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::pair<Texture, Texture>> textures)
-    : textures(std::move(textures)) {
+Mesh::Mesh(
+    std::vector<Vertex> vertices,
+    std::vector<unsigned int> indices,
+    std::shared_ptr<Texture> diffuseMap,
+    std::shared_ptr<Texture> specularMap) : diffuseMap(diffuseMap), specularMap(specularMap) {
 
     this->vertexBuffer.setData<Vertex>(std::move(vertices));
     this->indexBuffer.setData(std::move(indices));
@@ -10,45 +13,35 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     layout.addAttribute<float>(3, false);
     layout.addAttribute<float>(3, false);
     layout.addAttribute<float>(2, false);
-    layout.addAttribute<unsigned int>(1, false);
 
     this->vertexArray.bindBuffers(this->vertexBuffer, layout, this->indexBuffer);
-
 }
 
 Mesh::Mesh(Mesh &&mesh) : 
     vertexBuffer(std::move(mesh.vertexBuffer)), 
     indexBuffer(std::move(mesh.indexBuffer)), 
     vertexArray(std::move(mesh.vertexArray)), 
-    textures(std::move(mesh.textures)) {
+    diffuseMap(mesh.diffuseMap),
+    specularMap(mesh.specularMap) {
 
 }
 
 void Mesh::draw(const Renderer &renderer, Shader &shader) const {
 
-    std::vector<int> textureIds(this->textures.size()), specularMapIds(this->textures.size());
-    int slot = 0;
-
-    for (size_t i = 0; i < this->textures.size(); i++) {
-
-        this->textures[i].first.bind(slot);
-        textureIds[i] = slot++;
-
-        this->textures[i].second.bind(slot);
-        specularMapIds[i] = slot++;
-    }
+    // TODO: Figure out a cleaner and more generalized way of handling textures of diff. types
+    int initialSlot = 0;
 
     shader.bind();
-    shader.setUniform1iArr("u_Textures", textureIds);
-    shader.setUniform1iArr("u_SpecularMaps", specularMapIds);
+
+    this->diffuseMap->bind(initialSlot);
+    shader.setUniform1i("u_Texture", initialSlot++);
+
+    this->specularMap->bind(initialSlot);
+    shader.setUniform1i("u_SpecularMap", initialSlot++);
 
     renderer.draw(this->vertexArray, shader);
 }
 
 Mesh::~Mesh() {
 
-}
-
-void Mesh::setTextures(std::vector<std::pair<Texture, Texture>> textures) {
-    this->textures = std::move(textures);
 }

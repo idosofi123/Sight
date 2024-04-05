@@ -35,14 +35,13 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<std::pair<Texture, Texture>> textures;
+    std::string diffusePath, specularPath = R"(assets/textures/defaultSpecularMap.png)";
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         vertices.push_back({
             { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z },
             { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z },
-            mesh->HasTextureCoords(0) ? glm::vec2{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y } : glm::vec2{0, 0},
-            0
+            mesh->HasTextureCoords(0) ? glm::vec2{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y } : glm::vec2{0, 0}
         });
     }
 
@@ -58,23 +57,34 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         const auto &meshMaterial = scene->mMaterials[mesh->mMaterialIndex];
 
         // TODO: Generalize, as now this code assumes the material holds at most one diffuse texture and at most one specular map.
-        // TODO: Maintain an asset manager for the textures to prevent multiple loadings of the same asset
+        // TODO: Maintain a singleton asset manager.
 
         aiString aiPath;
-        std::string diffusePath, specularPath = R"(assets/textures/defaultSpecularMap.png)";
 
         meshMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aiPath);
         diffusePath.assign(aiPath.C_Str(), aiPath.length);
+        diffusePath = this->directoryPath + diffusePath;
 
         if (meshMaterial->GetTexture(aiTextureType_SPECULAR, 0, &aiPath) == aiReturn_SUCCESS) {
-
             specularPath.assign(aiPath.C_Str(), aiPath.length);
+            specularPath = this->directoryPath + specularPath;
         }
-
-        textures.push_back(std::pair<Texture, Texture>{ Texture(this->directoryPath + diffusePath), Texture(this->directoryPath + specularPath) });
     }
 
-    return Mesh(std::move(vertices), std::move(indices), std::move(textures));
+    return Mesh(
+        std::move(vertices),
+        std::move(indices),
+        this->loadTexture(diffusePath),
+        this->loadTexture(specularPath));
+}
+
+std::shared_ptr<Texture> Model::loadTexture(const std::string& path) {
+
+    if (this->textures.find(path) == this->textures.end()) {
+        this->textures[path] = std::make_shared<Texture>(path);
+    }
+
+    return this->textures[path];
 }
 
 void Model::draw(const Renderer& renderer, Shader& shader) const {

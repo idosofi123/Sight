@@ -1,7 +1,7 @@
 #version 330 core
 
-uniform sampler2D u_Textures[4];
-uniform sampler2D u_SpecularMaps[4];
+uniform sampler2D u_Texture;
+uniform sampler2D u_SpecularMap;
 uniform vec4 u_LightColor;
 uniform vec3 u_LightPosition;
 uniform vec3 u_CameraPosition;
@@ -84,5 +84,7 @@ vec4 spotLight(float fragmentShininess) {
 }
 
 void main() {
-    color = texture(u_Textures[v_TextureIndex], v_TextureCoord) * directionalLight(texture(u_SpecularMaps[v_TextureIndex], v_TextureCoord).r);
+    vec4 textureColor = texture(u_Texture, v_TextureCoord);
+    vec4 light = spotLight(texture(u_SpecularMap, v_TextureCoord).r);
+    color = textureColor * light;
 } 
