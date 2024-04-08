@@ -2,9 +2,10 @@
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
 #include "IndexBuffer.hpp"
+#include "NonCopyable.hpp"
 #include <memory>
 
-class VertexArray {
+class VertexArray : public NonCopyable<VertexArray> {
 
 private:
     unsigned int id;
@@ -14,9 +15,6 @@ private:
 public:
     VertexArray(const VertexBuffer &buffer, const VertexBufferLayout &layout, const IndexBuffer &indexBuffer);
     VertexArray(VertexArray&&);
-    VertexArray(const VertexArray&) = delete;
-    VertexArray& operator=(const VertexArray&) = delete;
-    VertexArray& operator=(VertexArray&&) = delete;
     VertexArray();
     ~VertexArray();
     void bind() const;

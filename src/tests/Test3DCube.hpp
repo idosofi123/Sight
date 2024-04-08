@@ -99,7 +99,7 @@ namespace Tests {
         }
         
         ~Test3DCube() {
-
+            glDisable(GL_DEPTH_TEST);
         }
 
         void handleInput(GLFWwindow* window) {

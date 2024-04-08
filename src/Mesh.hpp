@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include "VertexArray.hpp"
+#include "NonCopyable.hpp"
 #include "Texture.hpp"
 #include "Drawable.hpp"
 
@@ -12,7 +13,7 @@ struct Vertex {
     glm::vec2 textureCoord;
 };
 
-class Mesh : public Drawable {
+class Mesh : public Drawable, public NonCopyable<Mesh> {
 
 private:
 
@@ -24,9 +25,6 @@ private:
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap);
     Mesh(Mesh&&);
-    Mesh(const Mesh&) = delete;
-    Mesh& operator=(const Mesh&) = delete;
-    Mesh& operator=(Mesh&&) = delete;
     virtual void draw(const Renderer &renderer, Shader &shader) const override;
     ~Mesh();
 };

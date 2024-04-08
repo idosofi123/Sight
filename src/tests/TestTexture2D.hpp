@@ -4,7 +4,7 @@
 #include "../IndexBuffer.hpp"
 #include "../VertexBuffer.hpp"
 #include "../VertexArray.hpp"
-#include "../Texture.hpp"
+#include "../Texture2D.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -20,7 +20,7 @@ namespace Tests {
         glm::vec3 translation;
         glm::mat4 projection;
         glm::mat4 view;
-        Texture texture;
+        Texture2D texture;
 
     public:
         TestTexture2D();

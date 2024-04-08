@@ -1,22 +1,25 @@
 #pragma once
 #include <vector>
-#include <string>
+#include <GL/glew.h>
+#include "NonCopyable.hpp"
 
-class Texture {
+class Texture : public NonCopyable<Texture> {
 
 private:
+
+protected:
+
     unsigned int id;
     int width;
     int height;
     int bytesPerPixel;
+    virtual GLenum getGLType() const = 0;
 
 public:
-    Texture(const std::string &filePath);
-    Texture(Texture &&texture);
-    Texture(const Texture &texture) = delete;
-    Texture& operator=(const Texture &texture) = delete;
-    Texture& operator=(Texture &&texture) = delete;
-    ~Texture();
+    
+    Texture();
+    Texture(Texture &&);
+    virtual ~Texture();
 
     void bind(unsigned int slot = 0) const;
     void unbind() const;

@@ -78,10 +78,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         this->loadTexture(specularPath));
 }
 
-std::shared_ptr<Texture> Model::loadTexture(const std::string& path) {
+std::shared_ptr<Texture2D> Model::loadTexture(const std::string& path) {
 
     if (this->textures.find(path) == this->textures.end()) {
-        this->textures[path] = std::make_shared<Texture>(path);
+        this->textures[path] = std::make_shared<Texture2D>(path);
     }
 
     return this->textures[path];

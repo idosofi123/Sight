@@ -1,8 +1,9 @@
 #pragma once
 #include <GL/glew.h>
+#include "NonCopyable.hpp"
 #include <vector>
 
-class Buffer {
+class Buffer : public NonCopyable<Buffer> {
 
 private:
 
@@ -12,11 +13,9 @@ protected:
     unsigned int count;
 
 public:
+
     Buffer();
     Buffer(Buffer&&);
-    Buffer(const Buffer&) = delete;
-    Buffer& operator=(Buffer&&) = delete;
-    Buffer& operator=(const Buffer&) = delete;
     ~Buffer();
     void bind() const;
     void unbind() const;
