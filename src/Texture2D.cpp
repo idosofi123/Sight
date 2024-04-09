@@ -7,10 +7,10 @@ GLenum Texture2D::getGLType() const {
 }
 
 Texture2D::Texture2D(const std::string &filePath) : Texture() {
+    
     stbi_set_flip_vertically_on_load(true);
     std::unique_ptr<unsigned char> textureData{stbi_load(filePath.c_str(), &this->width, &this->height, &this->bytesPerPixel, 4)};
 
-    glGenTextures(1, &this->id);
     glBindTexture(GL_TEXTURE_2D, this->id);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

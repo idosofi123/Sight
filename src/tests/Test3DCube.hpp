@@ -11,6 +11,7 @@
 #include "../Texture.hpp"
 #include "../Model.hpp"
 #include "../Camera.hpp"
+#include "../Cubemap.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -25,13 +26,16 @@ namespace Tests {
     private:
 
         Shader shader;
+        Shader skyboxShader;
         glm::vec3 model;
         Model bagModel;
+        Mesh skyboxMesh;
         VertexBuffer lightVBO;
         IndexBuffer lightEBO;
         VertexArray lightVAO;
         Shader defaultShader;
         glm::vec3 lightModel;
+        Cubemap cubemap;
 
         glm::vec3 cameraVelocity;
         float rotation;
@@ -53,9 +57,44 @@ namespace Tests {
             rotation(0.0f),
             camera({0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, -1.0f}, 45.0f, 0.1f, 100.0f, Configuration::SCREEN_W, Configuration::SCREEN_H),
             cameraVelocity({0.0f, 0.0f, 0.0f}),
-            bagModel(R"(assets/models/plasmaSword/scene.gltf)") {
+            bagModel(R"(assets/models/plasmaSword/scene.gltf)"),
+            cubemap({
+                R"(assets/textures/skybox/right.jpg)",
+                R"(assets/textures/skybox/left.jpg)",
+                R"(assets/textures/skybox/top.jpg)",
+                R"(assets/textures/skybox/bottom.jpg)",
+                R"(assets/textures/skybox/front.jpg)",
+                R"(assets/textures/skybox/back.jpg)"
+            }),
+            skyboxMesh({
+                {{-0.5f, -0.5f, -0.5f}},
+                {{-0.5f, -0.5f, 0.5f}},
+                {{0.5f, -0.5f, 0.5f}},
+                {{0.5f, -0.5f, -0.5f}},
+                {{-0.5f, 0.5f, -0.5f}},
+                {{-0.5f, 0.5f, 0.5f}},
+                {{0.5f, 0.5f, 0.5f}},
+                {{0.5f, 0.5f, -0.5f}}
+            },{
+                0, 1, 2,
+                2, 3, 0,
+                4, 5, 6,
+                6, 7, 4,
+                0, 3, 7,
+                7, 4, 0,
+                1, 2, 6,
+                6, 5, 1,
+                0, 1, 5,
+                5, 4, 0,
+                2, 3, 7,
+                7, 6, 2
+            }, nullptr, nullptr),
+            skyboxShader(
+                Shader::readSourceFromFile(R"(assets/shaders/skybox.vert)"),
+                Shader::readSourceFromFile(R"(assets/shaders/skybox.frag)")) {
 
             glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LEQUAL);
 
             lightVBO.setData<float>({
                 -0.5f, -0.5f, -0.5f,
@@ -209,6 +248,13 @@ namespace Tests {
             defaultShader.setUniform4f("u_Color", lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 
             renderer.draw(lightVAO, defaultShader);
+
+            skyboxShader.bind();
+            cubemap.bind();
+            skyboxShader.setUniformMat4f("u_MVP", camera.getProjectionMatrix() * glm::mat4(glm::mat3(camera.getViewMatrix())));
+            skyboxShader.setUniform1i("u_Texture", 0);
+
+            skyboxMesh.draw(renderer, skyboxShader);
         }
 
         virtual void renderUI() override {
